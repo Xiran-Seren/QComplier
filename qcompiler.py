@@ -6,14 +6,12 @@ It uses a recursive-descent parser, then emits simple three-address code and
 AArch64 GNU assembler source.
 """
 
-from __future__ import annotations
-
 import argparse
 import json
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 
 
 KEYWORDS = {"int", "void", "if", "else", "while", "return"}
@@ -43,9 +41,9 @@ def normalize_source(text: str) -> str:
     )
 
 
-def lex(text: str) -> list[Token]:
+def lex(text: str) -> List[Token]:
     text = normalize_source(text)
-    tokens: list[Token] = []
+    tokens: List[Token] = []
     i = 0
     line = 1
     col = 1
@@ -108,10 +106,10 @@ def lex(text: str) -> list[Token]:
 @dataclass
 class Node:
     kind: str
-    attrs: dict[str, Any] = field(default_factory=dict)
-    children: list["Node"] = field(default_factory=list)
+    attrs: Dict[str, Any] = field(default_factory=dict)
+    children: List["Node"] = field(default_factory=list)
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> Dict[str, Any]:
         return {
             "kind": self.kind,
             "attrs": self.attrs,
@@ -120,7 +118,7 @@ class Node:
 
 
 class Parser:
-    def __init__(self, tokens: list[Token]):
+    def __init__(self, tokens: List[Token]):
         self.tokens = tokens
         self.pos = 0
 
@@ -130,7 +128,7 @@ class Parser:
     def peek(self, offset: int = 1) -> Token:
         return self.tokens[self.pos + offset]
 
-    def accept(self, value: str | None = None, kind: str | None = None) -> Token | None:
+    def accept(self, value: Optional[str] = None, kind: Optional[str] = None) -> Optional[Token]:
         tok = self.cur()
         if value is not None and tok.value != value:
             return None
@@ -139,7 +137,7 @@ class Parser:
         self.pos += 1
         return tok
 
-    def expect(self, value: str | None = None, kind: str | None = None) -> Token:
+    def expect(self, value: Optional[str] = None, kind: Optional[str] = None) -> Token:
         tok = self.accept(value, kind)
         if tok is None:
             want = value if value is not None else kind
@@ -149,7 +147,7 @@ class Parser:
 
     def parse(self) -> Node:
         self.expect("{")
-        items: list[Node] = []
+        items: List[Node] = []
         while not self.accept("}"):
             if self.cur().value in {"int", "void"}:
                 items.append(self.parse_decl_or_func())
@@ -172,8 +170,8 @@ class Parser:
         self.expect(";")
         return Node("Decl", {"name": name, "type": typ, "dims": dims})
 
-    def parse_params(self) -> list[dict[str, Any]]:
-        params: list[dict[str, Any]] = []
+    def parse_params(self) -> List[Dict[str, Any]]:
+        params: List[Dict[str, Any]] = []
         if self.accept(")"):
             return params
         while True:
@@ -193,8 +191,8 @@ class Parser:
             self.expect(")")
         return params
 
-    def parse_array_suffix(self) -> list[int]:
-        dims: list[int] = []
+    def parse_array_suffix(self) -> List[int]:
+        dims: List[int] = []
         while self.accept("["):
             size = int(self.expect(kind="INT").value)
             self.expect("]")
@@ -203,7 +201,7 @@ class Parser:
 
     def parse_block(self) -> Node:
         self.expect("{")
-        items: list[Node] = []
+        items: List[Node] = []
         while not self.accept("}"):
             if self.cur().value in {"int", "void"}:
                 items.append(self.parse_decl_or_func())
@@ -301,9 +299,11 @@ class Parser:
         return self.parse_primary()
 
     def parse_primary(self) -> Node:
-        if tok := self.accept(kind="INT"):
+        tok = self.accept(kind="INT")
+        if tok:
             return Node("Int", {"value": int(tok.value)})
-        if tok := self.accept(kind="ID"):
+        tok = self.accept(kind="ID")
+        if tok:
             name = tok.value
             if self.accept("("):
                 args = self.parse_args()
@@ -324,8 +324,8 @@ class Parser:
         tok = self.cur()
         raise SyntaxError(f"Expected expression, got {tok.value!r} at {tok.line}:{tok.col}")
 
-    def parse_args(self) -> list[Node]:
-        args: list[Node] = []
+    def parse_args(self) -> List[Node]:
+        args: List[Node] = []
         if self.accept(")"):
             return args
         while True:
@@ -342,10 +342,10 @@ class TacEmitter:
     def __init__(self):
         self.temp_id = 0
         self.label_id = 0
-        self.lines: list[str] = []
-        self.symbols: list[dict[str, Any]] = []
-        self.scopes: list[set[str]] = [set()]
-        self.functions: dict[str, dict[str, Any]] = {}
+        self.lines: List[str] = []
+        self.symbols: List[Dict[str, Any]] = []
+        self.scopes: List[Set[str]] = [set()]
+        self.functions: Dict[str, Dict[str, Any]] = {}
 
     def temp(self) -> str:
         value = f"t{self.temp_id}"
@@ -357,7 +357,7 @@ class TacEmitter:
         self.label_id += 1
         return value
 
-    def emit_program(self, node: Node) -> tuple[str, list[dict[str, Any]]]:
+    def emit_program(self, node: Node) -> Tuple[str, List[Dict[str, Any]]]:
         for child in node.children:
             if child.kind == "Decl":
                 self.emit_global_decl(child)
@@ -536,30 +536,35 @@ class TacEmitter:
 class ArmGenerator:
     def __init__(self, tac: str):
         self.tac_lines = [line.strip() for line in tac.splitlines() if line.strip()]
-        self.globals: dict[str, int] = {}
-        self.functions: dict[str, list[str]] = {}
-        self.main_lines: list[str] = []
-        self.pending_params: list[str] = []
+        self.globals: Dict[str, int] = {}
+        self.functions: Dict[str, List[str]] = {}
+        self.main_lines: List[str] = []
+        self.pending_params: List[str] = []
 
     def parse(self) -> None:
-        current: str | None = None
+        current: Optional[str] = None
         for line in self.tac_lines:
-            if m := re.fullmatch(r"i(\d+)\s+([A-Za-z_][A-Za-z0-9_]*);", line):
+            m = re.fullmatch(r"i(\d+)\s+([A-Za-z_][A-Za-z0-9_]*);", line)
+            if m:
                 self.globals[m.group(2)] = int(m.group(1))
-            elif m := re.fullmatch(r"define\s+([A-Za-z_][A-Za-z0-9_]*)\(([^)]*)\)\{", line):
+                continue
+            m = re.fullmatch(r"define\s+([A-Za-z_][A-Za-z0-9_]*)\(([^)]*)\)\{", line)
+            if m:
                 current = m.group(1)
                 params = [p.strip() for p in m.group(2).split(",") if p.strip()]
                 self.functions[current] = [f";@params {','.join(params)}"]
-            elif line == "}":
+                continue
+            if line == "}":
                 current = None
-            elif current:
+                continue
+            if current:
                 self.functions[current].append(line)
-            else:
-                self.main_lines.append(line)
+                continue
+            self.main_lines.append(line)
 
     def generate(self) -> str:
         self.parse()
-        out: list[str] = [
+        out: List[str] = [
             ".arch armv8-a",
             ".section .bss",
             ".align 3",
@@ -575,8 +580,8 @@ class ArmGenerator:
         out += ["_exit:", "    mov x0, #0", "    mov x8, #93", "    svc #0"]
         return "\n".join(out) + "\n"
 
-    def emit_function(self, name: str, lines: list[str]) -> list[str]:
-        params: list[str] = []
+    def emit_function(self, name: str, lines: List[str]) -> List[str]:
+        params: List[str] = []
         body = lines
         if lines and lines[0].startswith(";@params "):
             params = [p for p in lines[0][9:].split(",") if p]
@@ -602,7 +607,7 @@ class ArmGenerator:
         ]
         return out
 
-    def context_for(self, lines: list[str], params: list[str]) -> dict[str, Any]:
+    def context_for(self, lines: List[str], params: List[str]) -> Dict[str, Any]:
         names = set(params)
         for line in lines:
             for name in re.findall(r"\b[A-Za-z_][A-Za-z0-9_]*\b", line):
@@ -612,8 +617,8 @@ class ArmGenerator:
         locals_map = {name: (i + 1) * 8 for i, name in enumerate(sorted(names))}
         return {"locals": locals_map}
 
-    def emit_lines(self, lines: list[str], ctx: dict[str, Any], exit_label: str) -> list[str]:
-        out: list[str] = []
+    def emit_lines(self, lines: List[str], ctx: Dict[str, Any], exit_label: str) -> List[str]:
+        out: List[str] = []
         self.pending_params = []
         for raw in lines:
             line = raw.rstrip(";")
@@ -625,49 +630,63 @@ class ArmGenerator:
                 out.append(f"    b {line.split()[1]}")
             elif line.startswith("PAR "):
                 self.pending_params.append(line[4:].strip())
-            elif m := re.fullmatch(r"([A-Za-z_][A-Za-z0-9_]*)\s*=\s*CALL\s+([A-Za-z_][A-Za-z0-9_]*),\s*(\d+)", line):
-                dest, fn, _argc = m.groups()
-                for i, arg in enumerate(self.pending_params[:8]):
-                    out.extend(self.load_value(arg, "x9", ctx))
-                    out.append(f"    mov x{i}, x9")
-                self.pending_params = []
-                out.append(f"    bl {fn}")
-                out.extend(self.store_value("x0", dest, ctx))
-            elif m := re.fullmatch(r"RETURN\s+(.+)", line):
-                out.extend(self.load_value(m.group(1), "x0", ctx))
-                out.append(f"    b {exit_label}")
-            elif m := re.fullmatch(r"IF\s+(.+?)\s+(<=|>=|==|!=|<|>)\s+(.+?)\s+THEN\s+(\w+)\s+ELSE\s+(\w+)", line):
-                left, op, right, lt, lf = m.groups()
-                out.extend(self.load_value(left, "x9", ctx))
-                out.extend(self.load_value(right, "x10", ctx))
-                out.append("    cmp x9, x10")
-                out.append(f"    {branch_op(op)} {lt}")
-                out.append(f"    b {lf}")
-            elif m := re.fullmatch(r"([A-Za-z_][A-Za-z0-9_]*)\s*=\s*M\[(.+)\]", line):
-                dest, addr = m.groups()
-                out.extend(self.load_value(addr, "x9", ctx))
-                out.append("    ldr x10, [x9]")
-                out.extend(self.store_value("x10", dest, ctx))
-            elif m := re.fullmatch(r"M\[(.+)\]\s*=\s*(.+)", line):
-                addr, value = m.groups()
-                out.extend(self.load_value(addr, "x9", ctx))
-                out.extend(self.load_value(value, "x10", ctx))
-                out.append("    str x10, [x9]")
-            elif m := re.fullmatch(r"([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.+?)\s*([+\-*/]|<=|>=|==|!=|<|>|&&|\|\|)\s*(.+)", line):
-                dest, left, op, right = m.groups()
-                out.extend(self.load_value(left, "x9", ctx))
-                out.extend(self.load_value(right, "x10", ctx))
-                out.extend(self.binary_op(op, "x11"))
-                out.extend(self.store_value("x11", dest, ctx))
-            elif m := re.fullmatch(r"([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.+)", line):
-                dest, src = m.groups()
-                out.extend(self.load_value(src, "x9", ctx))
-                out.extend(self.store_value("x9", dest, ctx))
             else:
+                m = re.fullmatch(r"([A-Za-z_][A-Za-z0-9_]*)\s*=\s*CALL\s+([A-Za-z_][A-Za-z0-9_]*),\s*(\d+)", line)
+                if m:
+                    dest, fn, _argc = m.groups()
+                    for i, arg in enumerate(self.pending_params[:8]):
+                        out.extend(self.load_value(arg, "x9", ctx))
+                        out.append(f"    mov x{i}, x9")
+                    self.pending_params = []
+                    out.append(f"    bl {fn}")
+                    out.extend(self.store_value("x0", dest, ctx))
+                    continue
+                m = re.fullmatch(r"RETURN\s+(.+)", line)
+                if m:
+                    out.extend(self.load_value(m.group(1), "x0", ctx))
+                    out.append(f"    b {exit_label}")
+                    continue
+                m = re.fullmatch(r"IF\s+(.+?)\s+(<=|>=|==|!=|<|>)\s+(.+?)\s+THEN\s+(\w+)\s+ELSE\s+(\w+)", line)
+                if m:
+                    left, op, right, lt, lf = m.groups()
+                    out.extend(self.load_value(left, "x9", ctx))
+                    out.extend(self.load_value(right, "x10", ctx))
+                    out.append("    cmp x9, x10")
+                    out.append(f"    {branch_op(op)} {lt}")
+                    out.append(f"    b {lf}")
+                    continue
+                m = re.fullmatch(r"([A-Za-z_][A-Za-z0-9_]*)\s*=\s*M\[(.+)\]", line)
+                if m:
+                    dest, addr = m.groups()
+                    out.extend(self.load_value(addr, "x9", ctx))
+                    out.append("    ldr x10, [x9]")
+                    out.extend(self.store_value("x10", dest, ctx))
+                    continue
+                m = re.fullmatch(r"M\[(.+)\]\s*=\s*(.+)", line)
+                if m:
+                    addr, value = m.groups()
+                    out.extend(self.load_value(addr, "x9", ctx))
+                    out.extend(self.load_value(value, "x10", ctx))
+                    out.append("    str x10, [x9]")
+                    continue
+                m = re.fullmatch(r"([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.+?)\s*([+\-*/]|<=|>=|==|!=|<|>|&&|\|\|)\s*(.+)", line)
+                if m:
+                    dest, left, op, right = m.groups()
+                    out.extend(self.load_value(left, "x9", ctx))
+                    out.extend(self.load_value(right, "x10", ctx))
+                    out.extend(self.binary_op(op, "x11"))
+                    out.extend(self.store_value("x11", dest, ctx))
+                    continue
+                m = re.fullmatch(r"([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.+)", line)
+                if m:
+                    dest, src = m.groups()
+                    out.extend(self.load_value(src, "x9", ctx))
+                    out.extend(self.store_value("x9", dest, ctx))
+                    continue
                 out.append(f"    // unsupported TAC: {line}")
         return out
 
-    def binary_op(self, op: str, target: str) -> list[str]:
+    def binary_op(self, op: str, target: str) -> List[str]:
         if op == "+":
             return [f"    add {target}, x9, x10"]
         if op == "-":
@@ -684,7 +703,7 @@ class ArmGenerator:
             return ["    orr x9, x9, x10", "    cmp x9, #0", f"    cset {target}, ne"]
         raise NotImplementedError(op)
 
-    def load_value(self, operand: str, reg: str, ctx: dict[str, Any]) -> list[str]:
+    def load_value(self, operand: str, reg: str, ctx: Dict[str, Any]) -> List[str]:
         operand = operand.strip()
         if re.fullmatch(r"-?\d+", operand):
             return [f"    mov {reg}, #{operand}"]
@@ -694,7 +713,7 @@ class ArmGenerator:
             return [f"    ldr {reg}, [x29, #-{ctx['locals'][operand]}]"]
         return [f"    mov {reg}, #0    // unknown operand {operand}"]
 
-    def store_value(self, reg: str, name: str, ctx: dict[str, Any]) -> list[str]:
+    def store_value(self, reg: str, name: str, ctx: Dict[str, Any]) -> List[str]:
         if name in ctx["locals"]:
             return [f"    str {reg}, [x29, #-{ctx['locals'][name]}]"]
         if name in self.globals:
@@ -733,7 +752,7 @@ def compile_file(src: Path, out_dir: Path) -> None:
 
 def peephole_opt(asm: str) -> str:
     lines = asm.splitlines()
-    out: list[str] = []
+    out: List[str] = []
     for line in lines:
         if re.fullmatch(r"\s*mov\s+(x\d+),\s*\1", line):
             continue
@@ -741,7 +760,7 @@ def peephole_opt(asm: str) -> str:
     return "\n".join(out) + "\n"
 
 
-def main(argv: Iterable[str] | None = None) -> int:
+def main(argv: Optional[Iterable[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Compile QL source to tokens, QAST, QTAC, and ARM64 assembly.")
     parser.add_argument("source", nargs="?", default="qsort.ql", help="QL source file")
     parser.add_argument("-o", "--out-dir", default="build", help="output directory")
@@ -752,3 +771,4 @@ def main(argv: Iterable[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

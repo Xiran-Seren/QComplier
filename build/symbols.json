@@ -1,0 +1,118 @@
+[
+  {
+    "scope": "global",
+    "name": "a",
+    "type": "int",
+    "dims": [
+      10
+    ],
+    "width": 80
+  },
+  {
+    "scope": "swap",
+    "name": "arr",
+    "type": "int",
+    "param": true,
+    "array": true,
+    "width": 8
+  },
+  {
+    "scope": "swap",
+    "name": "i",
+    "type": "int",
+    "param": true,
+    "array": false,
+    "width": 8
+  },
+  {
+    "scope": "swap",
+    "name": "j",
+    "type": "int",
+    "param": true,
+    "array": false,
+    "width": 8
+  },
+  {
+    "scope": "local",
+    "name": "temp",
+    "type": "int",
+    "dims": [],
+    "width": 8
+  },
+  {
+    "scope": "partition",
+    "name": "arr",
+    "type": "int",
+    "param": true,
+    "array": true,
+    "width": 8
+  },
+  {
+    "scope": "partition",
+    "name": "low",
+    "type": "int",
+    "param": true,
+    "array": false,
+    "width": 8
+  },
+  {
+    "scope": "partition",
+    "name": "high",
+    "type": "int",
+    "param": true,
+    "array": false,
+    "width": 8
+  },
+  {
+    "scope": "local",
+    "name": "pivot",
+    "type": "int",
+    "dims": [],
+    "width": 8
+  },
+  {
+    "scope": "local",
+    "name": "i",
+    "type": "int",
+    "dims": [],
+    "width": 8
+  },
+  {
+    "scope": "local",
+    "name": "j",
+    "type": "int",
+    "dims": [],
+    "width": 8
+  },
+  {
+    "scope": "qsort",
+    "name": "arr",
+    "type": "int",
+    "param": true,
+    "array": true,
+    "width": 8
+  },
+  {
+    "scope": "qsort",
+    "name": "low",
+    "type": "int",
+    "param": true,
+    "array": false,
+    "width": 8
+  },
+  {
+    "scope": "qsort",
+    "name": "high",
+    "type": "int",
+    "param": true,
+    "array": false,
+    "width": 8
+  },
+  {
+    "scope": "local",
+    "name": "p",
+    "type": "int",
+    "dims": [],
+    "width": 8
+  }
+]

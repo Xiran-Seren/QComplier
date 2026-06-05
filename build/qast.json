@@ -1,0 +1,943 @@
+{
+  "kind": "Program",
+  "attrs": {},
+  "children": [
+    {
+      "kind": "Decl",
+      "attrs": {
+        "name": "a",
+        "type": "int",
+        "dims": [
+          10
+        ]
+      },
+      "children": []
+    },
+    {
+      "kind": "Function",
+      "attrs": {
+        "name": "swap",
+        "type": "void",
+        "params": [
+          {
+            "type": "int",
+            "name": "arr",
+            "array": true
+          },
+          {
+            "type": "int",
+            "name": "i",
+            "array": false
+          },
+          {
+            "type": "int",
+            "name": "j",
+            "array": false
+          }
+        ]
+      },
+      "children": [
+        {
+          "kind": "Block",
+          "attrs": {},
+          "children": [
+            {
+              "kind": "Decl",
+              "attrs": {
+                "name": "temp",
+                "type": "int",
+                "dims": []
+              },
+              "children": []
+            },
+            {
+              "kind": "ExprStmt",
+              "attrs": {},
+              "children": [
+                {
+                  "kind": "Assign",
+                  "attrs": {
+                    "op": "="
+                  },
+                  "children": [
+                    {
+                      "kind": "Var",
+                      "attrs": {
+                        "name": "temp"
+                      },
+                      "children": []
+                    },
+                    {
+                      "kind": "Index",
+                      "attrs": {},
+                      "children": [
+                        {
+                          "kind": "Var",
+                          "attrs": {
+                            "name": "arr"
+                          },
+                          "children": []
+                        },
+                        {
+                          "kind": "Var",
+                          "attrs": {
+                            "name": "i"
+                          },
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "ExprStmt",
+              "attrs": {},
+              "children": [
+                {
+                  "kind": "Assign",
+                  "attrs": {
+                    "op": "="
+                  },
+                  "children": [
+                    {
+                      "kind": "Index",
+                      "attrs": {},
+                      "children": [
+                        {
+                          "kind": "Var",
+                          "attrs": {
+                            "name": "arr"
+                          },
+                          "children": []
+                        },
+                        {
+                          "kind": "Var",
+                          "attrs": {
+                            "name": "i"
+                          },
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "Index",
+                      "attrs": {},
+                      "children": [
+                        {
+                          "kind": "Var",
+                          "attrs": {
+                            "name": "arr"
+                          },
+                          "children": []
+                        },
+                        {
+                          "kind": "Var",
+                          "attrs": {
+                            "name": "j"
+                          },
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "ExprStmt",
+              "attrs": {},
+              "children": [
+                {
+                  "kind": "Assign",
+                  "attrs": {
+                    "op": "="
+                  },
+                  "children": [
+                    {
+                      "kind": "Index",
+                      "attrs": {},
+                      "children": [
+                        {
+                          "kind": "Var",
+                          "attrs": {
+                            "name": "arr"
+                          },
+                          "children": []
+                        },
+                        {
+                          "kind": "Var",
+                          "attrs": {
+                            "name": "j"
+                          },
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "Var",
+                      "attrs": {
+                        "name": "temp"
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "Function",
+      "attrs": {
+        "name": "partition",
+        "type": "int",
+        "params": [
+          {
+            "type": "int",
+            "name": "arr",
+            "array": true
+          },
+          {
+            "type": "int",
+            "name": "low",
+            "array": false
+          },
+          {
+            "type": "int",
+            "name": "high",
+            "array": false
+          }
+        ]
+      },
+      "children": [
+        {
+          "kind": "Block",
+          "attrs": {},
+          "children": [
+            {
+              "kind": "Decl",
+              "attrs": {
+                "name": "pivot",
+                "type": "int",
+                "dims": []
+              },
+              "children": []
+            },
+            {
+              "kind": "Decl",
+              "attrs": {
+                "name": "i",
+                "type": "int",
+                "dims": []
+              },
+              "children": []
+            },
+            {
+              "kind": "Decl",
+              "attrs": {
+                "name": "j",
+                "type": "int",
+                "dims": []
+              },
+              "children": []
+            },
+            {
+              "kind": "ExprStmt",
+              "attrs": {},
+              "children": [
+                {
+                  "kind": "Assign",
+                  "attrs": {
+                    "op": "="
+                  },
+                  "children": [
+                    {
+                      "kind": "Var",
+                      "attrs": {
+                        "name": "pivot"
+                      },
+                      "children": []
+                    },
+                    {
+                      "kind": "Index",
+                      "attrs": {},
+                      "children": [
+                        {
+                          "kind": "Var",
+                          "attrs": {
+                            "name": "arr"
+                          },
+                          "children": []
+                        },
+                        {
+                          "kind": "Var",
+                          "attrs": {
+                            "name": "high"
+                          },
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "ExprStmt",
+              "attrs": {},
+              "children": [
+                {
+                  "kind": "Assign",
+                  "attrs": {
+                    "op": "="
+                  },
+                  "children": [
+                    {
+                      "kind": "Var",
+                      "attrs": {
+                        "name": "i"
+                      },
+                      "children": []
+                    },
+                    {
+                      "kind": "Binary",
+                      "attrs": {
+                        "op": "-"
+                      },
+                      "children": [
+                        {
+                          "kind": "Var",
+                          "attrs": {
+                            "name": "low"
+                          },
+                          "children": []
+                        },
+                        {
+                          "kind": "Int",
+                          "attrs": {
+                            "value": 1
+                          },
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "ExprStmt",
+              "attrs": {},
+              "children": [
+                {
+                  "kind": "Assign",
+                  "attrs": {
+                    "op": "="
+                  },
+                  "children": [
+                    {
+                      "kind": "Var",
+                      "attrs": {
+                        "name": "j"
+                      },
+                      "children": []
+                    },
+                    {
+                      "kind": "Binary",
+                      "attrs": {
+                        "op": "-"
+                      },
+                      "children": [
+                        {
+                          "kind": "Var",
+                          "attrs": {
+                            "name": "low"
+                          },
+                          "children": []
+                        },
+                        {
+                          "kind": "Int",
+                          "attrs": {
+                            "value": 1
+                          },
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "While",
+              "attrs": {},
+              "children": [
+                {
+                  "kind": "Binary",
+                  "attrs": {
+                    "op": "<"
+                  },
+                  "children": [
+                    {
+                      "kind": "Assign",
+                      "attrs": {
+                        "op": "="
+                      },
+                      "children": [
+                        {
+                          "kind": "Var",
+                          "attrs": {
+                            "name": "j"
+                          },
+                          "children": []
+                        },
+                        {
+                          "kind": "Binary",
+                          "attrs": {
+                            "op": "+"
+                          },
+                          "children": [
+                            {
+                              "kind": "Var",
+                              "attrs": {
+                                "name": "j"
+                              },
+                              "children": []
+                            },
+                            {
+                              "kind": "Int",
+                              "attrs": {
+                                "value": 1
+                              },
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "Var",
+                      "attrs": {
+                        "name": "high"
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "kind": "Block",
+                  "attrs": {},
+                  "children": [
+                    {
+                      "kind": "If",
+                      "attrs": {},
+                      "children": [
+                        {
+                          "kind": "Binary",
+                          "attrs": {
+                            "op": "<"
+                          },
+                          "children": [
+                            {
+                              "kind": "Index",
+                              "attrs": {},
+                              "children": [
+                                {
+                                  "kind": "Var",
+                                  "attrs": {
+                                    "name": "arr"
+                                  },
+                                  "children": []
+                                },
+                                {
+                                  "kind": "Var",
+                                  "attrs": {
+                                    "name": "j"
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "kind": "Var",
+                              "attrs": {
+                                "name": "pivot"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "Block",
+                          "attrs": {},
+                          "children": [
+                            {
+                              "kind": "ExprStmt",
+                              "attrs": {},
+                              "children": [
+                                {
+                                  "kind": "Assign",
+                                  "attrs": {
+                                    "op": "="
+                                  },
+                                  "children": [
+                                    {
+                                      "kind": "Var",
+                                      "attrs": {
+                                        "name": "i"
+                                      },
+                                      "children": []
+                                    },
+                                    {
+                                      "kind": "Binary",
+                                      "attrs": {
+                                        "op": "+"
+                                      },
+                                      "children": [
+                                        {
+                                          "kind": "Var",
+                                          "attrs": {
+                                            "name": "i"
+                                          },
+                                          "children": []
+                                        },
+                                        {
+                                          "kind": "Int",
+                                          "attrs": {
+                                            "value": 1
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "kind": "ExprStmt",
+                              "attrs": {},
+                              "children": [
+                                {
+                                  "kind": "Call",
+                                  "attrs": {
+                                    "name": "swap"
+                                  },
+                                  "children": [
+                                    {
+                                      "kind": "ArrayDecay",
+                                      "attrs": {},
+                                      "children": [
+                                        {
+                                          "kind": "Var",
+                                          "attrs": {
+                                            "name": "arr"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "kind": "Var",
+                                      "attrs": {
+                                        "name": "i"
+                                      },
+                                      "children": []
+                                    },
+                                    {
+                                      "kind": "Var",
+                                      "attrs": {
+                                        "name": "j"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "ExprStmt",
+              "attrs": {},
+              "children": [
+                {
+                  "kind": "Call",
+                  "attrs": {
+                    "name": "swap"
+                  },
+                  "children": [
+                    {
+                      "kind": "ArrayDecay",
+                      "attrs": {},
+                      "children": [
+                        {
+                          "kind": "Var",
+                          "attrs": {
+                            "name": "arr"
+                          },
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "Binary",
+                      "attrs": {
+                        "op": "+"
+                      },
+                      "children": [
+                        {
+                          "kind": "Var",
+                          "attrs": {
+                            "name": "i"
+                          },
+                          "children": []
+                        },
+                        {
+                          "kind": "Int",
+                          "attrs": {
+                            "value": 1
+                          },
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "Var",
+                      "attrs": {
+                        "name": "high"
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Return",
+              "attrs": {},
+              "children": [
+                {
+                  "kind": "Binary",
+                  "attrs": {
+                    "op": "+"
+                  },
+                  "children": [
+                    {
+                      "kind": "Var",
+                      "attrs": {
+                        "name": "i"
+                      },
+                      "children": []
+                    },
+                    {
+                      "kind": "Int",
+                      "attrs": {
+                        "value": 1
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "Function",
+      "attrs": {
+        "name": "qsort",
+        "type": "void",
+        "params": [
+          {
+            "type": "int",
+            "name": "arr",
+            "array": true
+          },
+          {
+            "type": "int",
+            "name": "low",
+            "array": false
+          },
+          {
+            "type": "int",
+            "name": "high",
+            "array": false
+          }
+        ]
+      },
+      "children": [
+        {
+          "kind": "Block",
+          "attrs": {},
+          "children": [
+            {
+              "kind": "Decl",
+              "attrs": {
+                "name": "p",
+                "type": "int",
+                "dims": []
+              },
+              "children": []
+            },
+            {
+              "kind": "If",
+              "attrs": {},
+              "children": [
+                {
+                  "kind": "Binary",
+                  "attrs": {
+                    "op": "<"
+                  },
+                  "children": [
+                    {
+                      "kind": "Var",
+                      "attrs": {
+                        "name": "low"
+                      },
+                      "children": []
+                    },
+                    {
+                      "kind": "Var",
+                      "attrs": {
+                        "name": "high"
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "kind": "Block",
+                  "attrs": {},
+                  "children": [
+                    {
+                      "kind": "ExprStmt",
+                      "attrs": {},
+                      "children": [
+                        {
+                          "kind": "Assign",
+                          "attrs": {
+                            "op": "="
+                          },
+                          "children": [
+                            {
+                              "kind": "Var",
+                              "attrs": {
+                                "name": "p"
+                              },
+                              "children": []
+                            },
+                            {
+                              "kind": "Call",
+                              "attrs": {
+                                "name": "partition"
+                              },
+                              "children": [
+                                {
+                                  "kind": "ArrayDecay",
+                                  "attrs": {},
+                                  "children": [
+                                    {
+                                      "kind": "Var",
+                                      "attrs": {
+                                        "name": "arr"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                },
+                                {
+                                  "kind": "Var",
+                                  "attrs": {
+                                    "name": "low"
+                                  },
+                                  "children": []
+                                },
+                                {
+                                  "kind": "Var",
+                                  "attrs": {
+                                    "name": "high"
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "ExprStmt",
+                      "attrs": {},
+                      "children": [
+                        {
+                          "kind": "Call",
+                          "attrs": {
+                            "name": "qsort"
+                          },
+                          "children": [
+                            {
+                              "kind": "ArrayDecay",
+                              "attrs": {},
+                              "children": [
+                                {
+                                  "kind": "Var",
+                                  "attrs": {
+                                    "name": "arr"
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "kind": "Var",
+                              "attrs": {
+                                "name": "low"
+                              },
+                              "children": []
+                            },
+                            {
+                              "kind": "Binary",
+                              "attrs": {
+                                "op": "-"
+                              },
+                              "children": [
+                                {
+                                  "kind": "Var",
+                                  "attrs": {
+                                    "name": "p"
+                                  },
+                                  "children": []
+                                },
+                                {
+                                  "kind": "Int",
+                                  "attrs": {
+                                    "value": 1
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "ExprStmt",
+                      "attrs": {},
+                      "children": [
+                        {
+                          "kind": "Call",
+                          "attrs": {
+                            "name": "qsort"
+                          },
+                          "children": [
+                            {
+                              "kind": "ArrayDecay",
+                              "attrs": {},
+                              "children": [
+                                {
+                                  "kind": "Var",
+                                  "attrs": {
+                                    "name": "arr"
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "kind": "Binary",
+                              "attrs": {
+                                "op": "+"
+                              },
+                              "children": [
+                                {
+                                  "kind": "Var",
+                                  "attrs": {
+                                    "name": "p"
+                                  },
+                                  "children": []
+                                },
+                                {
+                                  "kind": "Int",
+                                  "attrs": {
+                                    "value": 1
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "kind": "Var",
+                              "attrs": {
+                                "name": "high"
+                              },
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "ExprStmt",
+      "attrs": {},
+      "children": [
+        {
+          "kind": "Call",
+          "attrs": {
+            "name": "qsort"
+          },
+          "children": [
+            {
+              "kind": "ArrayDecay",
+              "attrs": {},
+              "children": [
+                {
+                  "kind": "Var",
+                  "attrs": {
+                    "name": "a"
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "kind": "Int",
+              "attrs": {
+                "value": 0
+              },
+              "children": []
+            },
+            {
+              "kind": "Int",
+              "attrs": {
+                "value": 9
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

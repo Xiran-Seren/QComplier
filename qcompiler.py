@@ -576,8 +576,19 @@ class ArmGenerator:
             out.extend(self.emit_function(name, lines))
         out += ["_start:"]
         ctx = self.context_for(self.main_lines, [])
+        main_frame = align16(8 * len(ctx["locals"]))
+        out += [
+            "    mov x29, sp",
+            f"    sub sp, sp, #{main_frame}",
+        ]
         out.extend(self.emit_lines(self.main_lines, ctx, "_exit"))
-        out += ["_exit:", "    mov x0, #0", "    mov x8, #93", "    svc #0"]
+        out += [
+            "_exit:",
+            f"    add sp, sp, #{main_frame}",
+            "    mov x0, #0",
+            "    mov x8, #93",
+            "    svc #0",
+        ]
         return "\n".join(out) + "\n"
 
     def emit_function(self, name: str, lines: List[str]) -> List[str]:

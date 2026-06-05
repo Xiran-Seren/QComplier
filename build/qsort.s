@@ -223,6 +223,8 @@ l6:
     ldp x29, x30, [sp], #16
     ret
 _start:
+    mov x29, sp
+    sub sp, sp, #16
     adrp x9, a
     add x9, x9, :lo12:a
     mov x0, x9
@@ -233,6 +235,7 @@ _start:
     bl qsort
     str x0, [x29, #-8]
 _exit:
+    add sp, sp, #16
     mov x0, #0
     mov x8, #93
     svc #0

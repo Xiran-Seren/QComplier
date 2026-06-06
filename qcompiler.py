@@ -763,12 +763,55 @@ def compile_file(src: Path, out_dir: Path) -> None:
 
 def peephole_opt(asm: str) -> str:
     lines = asm.splitlines()
-    out: List[str] = []
-    for line in lines:
-        if re.fullmatch(r"\s*mov\s+(x\d+),\s*\1", line):
-            continue
-        out.append(line)
-    return "\n".join(out) + "\n"
+
+    def label_name(line: str) -> Optional[str]:
+        match = re.fullmatch(r"\s*([A-Za-z_.$][A-Za-z0-9_.$]*):\s*", line)
+        return match.group(1) if match else None
+
+    def branch_target(line: str) -> Optional[str]:
+        match = re.fullmatch(r"\s*b\s+([A-Za-z_.$][A-Za-z0-9_.$]*)\s*", line)
+        return match.group(1) if match else None
+
+    def referenced_labels(items: List[str]) -> Set[str]:
+        refs: Set[str] = set()
+        for item in items:
+            match = re.fullmatch(r"\s*b(?:\.[A-Za-z]+)?\s+([A-Za-z_.$][A-Za-z0-9_.$]*)\s*", item)
+            if match:
+                refs.add(match.group(1))
+        return refs
+
+    changed = True
+    while changed:
+        changed = False
+        refs = referenced_labels(lines)
+        out: List[str] = []
+        i = 0
+        while i < len(lines):
+            line = lines[i]
+            if re.fullmatch(r"\s*mov\s+(x\d+),\s*\1\s*", line):
+                changed = True
+                i += 1
+                continue
+
+            target = branch_target(line)
+            next_label = label_name(lines[i + 1]) if i + 1 < len(lines) else None
+            if target and target == next_label:
+                changed = True
+                i += 1
+                continue
+
+            duplicate_label = label_name(lines[i + 1]) if i + 2 < len(lines) else None
+            duplicate_target = branch_target(lines[i + 2]) if i + 2 < len(lines) else None
+            if target and duplicate_label and duplicate_target == target and duplicate_label not in refs:
+                out.append(line)
+                changed = True
+                i += 3
+                continue
+
+            out.append(line)
+            i += 1
+        lines = out
+    return "\n".join(lines) + "\n"
 
 
 def main(argv: Optional[Iterable[str]] = None) -> int:
@@ -782,4 +825,3 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
